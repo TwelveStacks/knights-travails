@@ -1,41 +1,48 @@
 function knightMoves(start, end) {
-    let steps = 0
-    let path = {};
+    const moves = [
+        [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+        [1, -2], [1, 2], [2, -1], [2, 1]
+    ];
 
-    let moves = [[-2, -1], [-2, 1], [-1, -2], [-1, 2],
-    [1, -2], [1, 2], [2, -1], [2, 1]]
+    const queue = [[start]];
+    const visited = new Set([start]);
 
-    let visited = new Set()
-    let queue = [start]
+    while (queue.length) {
+        const path = queue.shift();
+        const current = path[path.length - 1];
 
-    while (queue.length > 0) {
-        let next = []
-        while (queue.length > 0) {
-            let current = queue.shift();
-            let currentX = current[0];
-            let currentY = current[1];
-            console.log([currentX, currentY])
+        if (current[0] === end[0] && current[1] === end[1]) {
+            return path;
+        }
 
-            if (currentX === end[0] && currentY === end[1]) {
-                return steps;
-            }
+        for (const m of moves) {
+            const nextX = current[0] + m[0];
+            const nextY = current[1] + m[1];
+            const next = [nextX, nextY];
 
-            for (let m of moves) {
-                let nextX = currentX + m[0];
-                let nextY = currentX + m[1];
-
-                // Check if within 8x8 chess board
-                if (nextX >= 0 && nextX < 8 && nextY >= 0 && nextY < 8) {
-                    if (!visited.has(nextX + "," + nextY)) {
-                        visited.add([nextX + "," + nextY])
-                        console.log([nextX, nextY]);
-                    }
-                }
+            // Check if within bounds of 8x8 chessboard and not already visited
+            if (nextX >= 0 && nextX < 8 && nextY >= 0 && nextY < 8 && !visited.has(next)) {
+                visited.add(next);
+                queue.push([...path, next]);
             }
         }
-        steps++;
-        queue = next;
+    }
+    return [];
+}
+
+function printPath(path) {
+    if (path.length === 0) {
+        console.log("Could not find a path from the start to the end.");
+    } else {
+        console.log(`You made it in ${path.length - 1} move(s)! Here is your path:`);
+        for (const square of path) {
+            console.log(square);
+        }
     }
 }
 
-knightMoves([0, 0], [7, 5]);
+const shortestPath = knightMoves([3, 3], [6, 6]);
+printPath(shortestPath);
+
+
+
